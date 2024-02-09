@@ -1,0 +1,44 @@
+name: 'GitHub Stats Visualization'
+description: 'Generate visualizations of GitHub user and repository statistics with GitHub Actions.'
+author: 'Jacob Strieb'
+branding:
+  icon: bar-chart-2
+  color: gray-dark
+inputs:
+  access_token:
+    description: 'The GitHub token used to create an authenticated client. Defaults to github provided token.'
+    default: ${{ github.token }}
+  excluded_repos:
+    description: 'Ignore certain repositories, add them in the owner/name format (for example, jstrieb/github-stats)'
+    required: false
+  excluded_langs:
+    description: 'Ignore certain languages (for example, html tex)'
+    required: false
+  exclude_forked_repos:
+    description: 'Exclude forks from the statistics. Default is true'
+    required: false
+    default: 'true'
+runs:
+  using: 'composite'
+  steps:
+    - name: 🐍 Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+        cache: 'pip'
+
+    - name: 📦 Install Dependencies
+      shell: bash
+      run: |
+        pip install -q --upgrade pip setuptools wheel
+        pip install -q -r requirements.txt
+
+    # Generate all statistics images
+    - name: 🖼 Generate images
+      shell: bash
+      run: python3 generate_images.py
+      env:
+        ACCESS_TOKEN: ${{ inputs.access_token }}
+        EXCLUDED: ${{ inputs.excluded_repos }}
+        EXCLUDED_LANGS: ${{ inputs.excluded_langs }}
+        EXCLUDE_FORKED_REPOS: ${{ inputs.exclude_forked_repos }}

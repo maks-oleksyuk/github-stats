@@ -1,0 +1,25 @@
+name: 🧪 QA
+
+on:
+  push:
+  pull_request:
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  test-action:
+    name: 🧪 GitHub Actions Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🛎️ Checkout
+        uses: actions/checkout@v4
+
+      - name: 🧪 Test Local Action
+        uses: ./
+        with:
+          access_token: ${{ secrets.TOKEN }}
